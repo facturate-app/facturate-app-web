@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/facturate-app-web/static/css/main.a3ebaae4.css",
+    "main.js": "/facturate-app-web/static/js/main.130cb42b.js",
+    "index.html": "/facturate-app-web/index.html",
+    "main.a3ebaae4.css.map": "/facturate-app-web/static/css/main.a3ebaae4.css.map",
+    "main.130cb42b.js.map": "/facturate-app-web/static/js/main.130cb42b.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a3ebaae4.css",
+    "static/js/main.130cb42b.js"
+  ]
+}
