@@ -1,5 +1,14 @@
 import React, { useMemo, useState } from "react";
-import './tailwind.css';
+import '../tailwind.css';
+import { Button } from '../components/Button'
+import { Badge } from '../components/Badge'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/Card'
+import { Checkbox } from '../components/Checkbox'
+import { Input } from '../components/Input'
+import { Label } from '../components/Label'
+import { Separator } from '../components/Separator'
+import { Switch } from '../components/Switch'
+import { Textarea } from '../components/Textarea'
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Check,
@@ -35,6 +44,8 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
+import { useUser } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
 
 // ---------------------------------------------------------
 // FACTURATE – Prototipo HD (Landing + Flujos completos)
@@ -109,141 +120,8 @@ function runCalcTests() {
 }
 runCalcTests();
 
-// ============== BUTTON ==============
-export const Button = ({ 
-  children, 
-  variant = "default", 
-  size = "default", 
-  className = "", 
-  ...props 
-}) => {
-  const base = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
-  
-  const variants = {
-    default: "bg-emerald-600 text-white shadow hover:bg-emerald-700",
-    destructive: "bg-red-600 text-white shadow-sm hover:bg-red-700",
-    outline: "border border-gray-300 bg-transparent shadow-sm hover:bg-gray-50 text-gray-900",
-    secondary: "bg-gray-100 text-gray-900 shadow-sm hover:bg-gray-200",
-    ghost: "hover:bg-gray-100 text-gray-900",
-    link: "text-emerald-600 underline-offset-4 hover:underline",
-  };
-
-  const sizes = {
-    default: "h-10 px-4 py-2",
-    sm: "h-9 rounded-md px-3",
-    lg: "h-11 rounded-md px-8",
-    icon: "h-10 w-10",
-  };
-
-  return (
-    <button className={`${base} ${variants[variant]} ${sizes[size]} ${className}`} {...props}>
-      {children}
-    </button>
-  );
-};
-
-// ============== CARD ==============
-export const Card = ({ className, ...props }) => (
-  <div className={`rounded-lg border border-gray-200 bg-white text-gray-900 shadow-sm ${className}`} {...props} />
-);
-
-export const CardHeader = ({ className, ...props }) => (
-  <div className={`flex flex-col space-y-1.5 p-6 ${className}`} {...props} />
-);
-
-export const CardTitle = ({ className, ...props }) => (
-  <h3 className={`text-xl font-semibold leading-none tracking-tight ${className}`} {...props} />
-);
-
-export const CardDescription = ({ className, ...props }) => (
-  <p className={`text-sm text-gray-500 ${className}`} {...props} />
-);
-
-export const CardContent = ({ className, ...props }) => (
-  <div className={`p-6 pt-0 ${className}`} {...props} />
-);
-
-export const CardFooter = ({ className, ...props }) => (
-  <div className={`flex items-center p-6 pt-0 ${className}`} {...props} />
-);
-
-// ============== INPUT ==============
-export const Input = ({ className, ...props }) => (
-  <input
-    className={`flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
-    {...props}
-  />
-);
-
-// ============== LABEL ==============
-export const Label = ({ className, ...props }) => (
-  <label
-    className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${className}`}
-    {...props}
-  />
-);
-
-// ============== TEXTAREA ==============
-export const Textarea = ({ className, ...props }) => (
-  <textarea
-    className={`flex min-h-[80px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
-    {...props}
-  />
-);
-
-// ============== BADGE ==============
-export const Badge = ({ variant = "default", className, ...props }) => {
-  const variants = {
-    default: "bg-emerald-600 text-white",
-    secondary: "bg-gray-100 text-gray-900",
-    destructive: "bg-red-600 text-white",
-    outline: "border border-gray-300 text-gray-900",
-  };
-
-  return (
-    <span
-      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors ${variants[variant]} ${className}`}
-      {...props}
-    />
-  );
-};
-
-// ============== SWITCH ==============
-export const Switch = ({ checked, onChange, className, ...props }) => (
-  <button
-    type="button"
-    role="switch"
-    aria-checked={checked}
-    className={`relative inline-flex h-6 w-11 items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 ${checked ? 'bg-emerald-600' : 'bg-gray-200'} ${className}`}
-    onClick={() => onChange(!checked)}
-    {...props}
-  >
-    <span
-      className={`block h-5 w-5 rounded-full bg-white shadow-lg ring-0 transition-transform ${checked ? 'translate-x-5' : 'translate-x-0'}`}
-    />
-  </button>
-);
-
-// ============== SEPARATOR ==============
-export const Separator = ({ className, ...props }) => (
-  <hr className={`border-t border-gray-200 ${className}`} {...props} />
-);
-
-// ============== CHECKBOX ==============
-export const Checkbox = ({ checked, onChange, className, ...props }) => (
-  <input
-    type="checkbox"
-    checked={checked}
-    onChange={(e) => onChange(e.target.checked)}
-    className={`h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 ${className}`}
-    {...props}
-  />
-);
-
 export default function App() {
-  const [route, setRoute] = useState("landing");
-  const [auth, setAuth] = useState(null); // {email, name}
-  const [openAuth, setOpenAuth] = useState(false);
+  const [route, setRoute] = useState("landing");  
   const [cartPlan, setCartPlan] = useState(null);
 
   // Estado global simple de la empresa
@@ -260,20 +138,18 @@ export default function App() {
 
   const [invoices, setInvoices] = useState([]);
 
-  const logout = () => { setAuth(null); setRoute("landing"); };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white text-slate-800">
-      <Topbar onMenu={(r) => setRoute(r)} auth={auth} onOpenAuth={() => setOpenAuth(true)} onLogout={logout} />
+      <Topbar onMenu={(r) => setRoute(r)}/>
 
       <main className="mx-auto max-w-7xl px-4 pb-24">
         <AnimatePresence mode="wait">
-          {route === "landing" && <Landing key="landing" onStart={() => setOpenAuth(true)} onPricing={() => setRoute("pricing")} />}
+          {route === "landing" && <Landing key="landing" onPricing={() => setRoute("pricing")} />}
           {route === "onboarding" && (
-            <Onboarding key="onb" company={company} setCompany={setCompany} auth={auth} onFinish={() => setRoute("dashboard")} />
+            <Onboarding key="onb" company={company} setCompany={setCompany} onFinish={() => setRoute("dashboard")} />
           )}
           {route === "dashboard" && (
-            <Dashboard key="dash" invoices={invoices} auth={auth} onCreate={() => setRoute("invoice:new")} goto={(r) => setRoute(r)} />
+            <Dashboard key="dash" invoices={invoices} onCreate={() => setRoute("invoice:new")} goto={(r) => setRoute(r)} />
           )}
           {route === "invoice:new" && (
             <InvoiceBuilder key="invb" company={company} onCancel={() => setRoute("dashboard")} onSave={(inv) => { setInvoices([inv, ...invoices]); setRoute("invoice:list"); }} />
@@ -298,22 +174,14 @@ export default function App() {
       </main>
 
       <Footer />
-
-      <AuthDialog
-        open={openAuth}
-        onOpenChange={setOpenAuth}
-        onAuthed={(u) => {
-          const name = u.name && u.name.trim() ? u.name.trim() : "Ignacio"; // Fallback para demos
-          setAuth({ ...u, name });
-          setOpenAuth(false);
-          setRoute("onboarding");
-        }}
-      />
     </div>
   );
 }
 
-function Topbar({ onMenu, auth, onOpenAuth, onLogout }) {
+function Topbar({ onMenu }) {
+
+  const navigate = useNavigate()
+
   return (
     <div className="sticky top-0 z-40 bg-white/80 backdrop-blur border-b">
       <div className="mx-auto max-w-7xl px-4 h-16 flex items-center justify-between">
@@ -329,14 +197,17 @@ function Topbar({ onMenu, auth, onOpenAuth, onLogout }) {
           <a className="hover:text-emerald-700" onClick={() => onMenu("settings")}>Ajustes</a>
         </div>
         <div className="flex items-center gap-3">
-          {auth ? (
+          {
+          /*auth ? (
             <>
               <div className="hidden sm:block text-sm text-slate-600">Hola, <span className="font-medium">{auth.name}</span></div>
               <Button variant="outline" className="gap-2" onClick={onLogout}><LogOut className="h-4 w-4"/>Salir</Button>
             </>
           ) : (
-            <Button className="gap-2 bg-emerald-600 hover:bg-emerald-700" onClick={onOpenAuth}><LogIn className="h-4 w-4"/>Ingresar</Button>
-          )}
+           */
+            <Button className="gap-2 bg-emerald-600 hover:bg-emerald-700" onClick={() => navigate('/login')}><LogIn className="h-4 w-4"/>Ingresar</Button>
+          }
+
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => onMenu("pricing")}><Menu/></Button>
         </div>
       </div>
@@ -430,10 +301,10 @@ function HeroLaptop() {
   );
 }
 
-function Onboarding({ company, setCompany, auth, onFinish }) {
+function Onboarding({ company, setCompany, onFinish }) {
   const steps = ["Empresa", "Impuestos", "Integraciones"];
   const stepper = useStepper(steps);
-  const firstName = auth?.name || "Ignacio";
+  const firstName =  "Ignacio";
   return (
     <motion.section initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="py-10">
       <div className="max-w-3xl mx-auto">
@@ -536,9 +407,9 @@ function Stepper({ steps, index }) {
   );
 }
 
-function Dashboard({ invoices, auth, onCreate, goto }) {
+function Dashboard({ invoices, onCreate, goto }) {
   const totalMonth = invoices.filter(i=>i.status!=="ANULADA").reduce((acc,i)=>acc+i.total,0);
-  const name = auth?.name || "Ignacio";
+  const name = "Ignacio";
   return (
     <motion.section initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="py-10">
       <div className="flex items-center justify-between mb-6">
