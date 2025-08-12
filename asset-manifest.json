@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/facturate-app-web/static/css/main.aff12de4.css",
-    "main.js": "/facturate-app-web/static/js/main.f4cfdcd2.js",
+    "main.css": "/facturate-app-web/static/css/main.16370f40.css",
+    "main.js": "/facturate-app-web/static/js/main.06e8bfec.js",
     "index.html": "/facturate-app-web/index.html",
-    "main.aff12de4.css.map": "/facturate-app-web/static/css/main.aff12de4.css.map",
-    "main.f4cfdcd2.js.map": "/facturate-app-web/static/js/main.f4cfdcd2.js.map"
+    "main.16370f40.css.map": "/facturate-app-web/static/css/main.16370f40.css.map",
+    "main.06e8bfec.js.map": "/facturate-app-web/static/js/main.06e8bfec.js.map"
   },
   "entrypoints": [
-    "static/css/main.aff12de4.css",
-    "static/js/main.f4cfdcd2.js"
+    "static/css/main.16370f40.css",
+    "static/js/main.06e8bfec.js"
   ]
 }
