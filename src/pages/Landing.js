@@ -1,221 +1,20 @@
-import React, { useMemo, useState } from "react";
 import '../tailwind.css';
 import { Button } from '../components/Button'
+import { Card, CardContent, CardHeader, CardTitle } from '../components/Card'
 import { Badge } from '../components/Badge'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/Card'
-import { Checkbox } from '../components/Checkbox'
-import { Input } from '../components/Input'
-import { Label } from '../components/Label'
-import { Separator } from '../components/Separator'
-import { Switch } from '../components/Switch'
-import { Textarea } from '../components/Textarea'
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
-  Check,
-  ChevronRight,
-  CreditCard,
-  Download,
   FileText,
-  LogIn,
-  LogOut,
-  Mail,
-  Menu,
-  MessageSquare,
-  Phone,
-  Plus,
-  Send,
-  Settings,
   Star,
   TrendingUp,
-  Upload,
   Users,
-  X,
-  QrCode,
 } from "lucide-react";
-import {
-  LineChart,
-  Line,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Tooltip,
-  BarChart,
-  Bar,
-  ResponsiveContainer,
-  Legend,
-} from "recharts";
-import { useUser } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 
-// ---------------------------------------------------------
-// FACTURATE – Prototipo HD (Landing + Flujos completos)
-// Personalización + datos ficticios para gráficos, clientes y KPIs
-// ---------------------------------------------------------
 
-// Datos de ejemplo (falsos) para dashboard
-const MONTHLY_SALES = [
-  { mes: "Ene", ventas: 430000, facturas: 62 },
-  { mes: "Feb", ventas: 520000, facturas: 71 },
-  { mes: "Mar", ventas: 610000, facturas: 85 },
-  { mes: "Abr", ventas: 480000, facturas: 69 },
-  { mes: "May", ventas: 730000, facturas: 102 },
-  { mes: "Jun", ventas: 820000, facturas: 118 },
-  { mes: "Jul", ventas: 910000, facturas: 126 },
-  { mes: "Ago", ventas: 870000, facturas: 120 },
-  { mes: "Sep", ventas: 940000, facturas: 131 },
-  { mes: "Oct", ventas: 990000, facturas: 138 },
-  { mes: "Nov", ventas: 1100000, facturas: 152 },
-  { mes: "Dic", ventas: 1500000, facturas: 201 },
-];
-
-const RECURRING_CLIENTS = [
-  { id: "r1", name: "Panadería La Espiga", facturas: 27, total: 540000 },
-  { id: "r2", name: "Ferretería López", facturas: 19, total: 380000 },
-  { id: "r3", name: "Estudio Contable Ríos", facturas: 15, total: 600000 },
-  { id: "r4", name: "Tienda Nube Celeste", facturas: 13, total: 260000 },
-  { id: "r5", name: "Kiosco 24/7", facturas: 11, total: 120000 },
-];
-
-const SAMPLE_CLIENTS = [
-  { id: "c1", name: "Panadería La Espiga", taxId: "30-71234567-8", email: "compras@laespiga.com", address: "Av. Rivadavia 1234" },
-  { id: "c2", name: "Estudio Contable Ríos", taxId: "20-20999888-7", email: "administracion@rios.com", address: "Reconquista 789" },
-  { id: "c3", name: "Tienda Nube Celeste", taxId: "27-27456789-0", email: "ventas@celeste.com", address: "Córdoba 556" },
-];
-
-const SAMPLE_ITEMS = [
-  { id: "p1", sku: "SVC-UX", name: "Servicio profesional", price: 120000 },
-  { id: "p2", sku: "PRD-001", name: "Producto estándar", price: 45000 },
-  { id: "p3", sku: "SUS-PRO", name: "Suscripción PRO (mensual)", price: 34990 },
-];
-
-// Utils
-const currency = (n) => n.toLocaleString("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
-
-function useStepper(steps) {
-  const [i, setI] = useState(0);
-  return {
-    index: i,
-    step: steps[i],
-    isFirst: i === 0,
-    isLast: i === steps.length - 1,
-    next: () => setI((v) => Math.min(v + 1, steps.length - 1)),
-    prev: () => setI((v) => Math.max(v - 1, 0)),
-    goto: (k) => setI(k),
-  };
-}
-
-// Pequeño "test suite" para lógicas de totales (se ve en consola)
-function runCalcTests() {
-  const items = [
-    { price: 100, qty: 2 },
-    { price: 50, qty: 3 },
-  ];
-  const subtotal = items.reduce((a, i) => a + i.price * i.qty, 0);
-  const iva = Math.round(subtotal * 0.21);
-  const total = subtotal + iva;
-
-  console.assert(subtotal === 350, "Subtotal debe ser 350");
-  console.assert(iva === 74, "IVA (21%) de 350 debe ser 74");
-  console.assert(total === 424, "Total debe ser 424");
-}
-runCalcTests();
-
-export default function App() {
-  const [route, setRoute] = useState("landing");  
-  const [cartPlan, setCartPlan] = useState(null);
-
-  // Estado global simple de la empresa
-  const [company, setCompany] = useState({
-    name: "Facturate Demo SA",
-    cuit: "30-12345678-9",
-    iva: "Responsable Inscripto",
-    pos: "0001",
-    email: "admin@facturate.app",
-    address: "Av. Demo 100",
-    mpEnabled: true,
-    waEnabled: true,
-  });
-
-  const [invoices, setInvoices] = useState([]);
-
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white text-slate-800">
-      <Topbar onMenu={(r) => setRoute(r)}/>
-
-      <main className="mx-auto max-w-7xl px-4 pb-24">
-        <AnimatePresence mode="wait">
-          {route === "landing" && <Landing key="landing" onPricing={() => setRoute("pricing")} />}
-          {route === "onboarding" && (
-            <Onboarding key="onb" company={company} setCompany={setCompany} onFinish={() => setRoute("dashboard")} />
-          )}
-          {route === "dashboard" && (
-            <Dashboard key="dash" invoices={invoices} onCreate={() => setRoute("invoice:new")} goto={(r) => setRoute(r)} />
-          )}
-          {route === "invoice:new" && (
-            <InvoiceBuilder key="invb" company={company} onCancel={() => setRoute("dashboard")} onSave={(inv) => { setInvoices([inv, ...invoices]); setRoute("invoice:list"); }} />
-          )}
-          {route === "invoice:list" && (
-            <InvoiceList key="invl" invoices={invoices} onNew={() => setRoute("invoice:new")} onBack={() => setRoute("dashboard")} />
-          )}
-          {route === "pricing" && (
-            <Pricing key="pricing" onSelect={(plan) => { setCartPlan(plan); setRoute("checkout"); }} />
-          )}
-          {route === "checkout" && (
-            <Checkout key="checkout" plan={cartPlan} onBack={() => setRoute("pricing")} onDone={() => setRoute("dashboard")} />
-          )}
-          {route === "team" && (
-            <Team key="team" />
-          )}
-          {route === "settings" && (
-            <SettingsPage key="settings" company={company} setCompany={setCompany} />
-          )}
-          {route === "support" && <Support key="support" />}
-        </AnimatePresence>
-      </main>
-
-      <Footer />
-    </div>
-  );
-}
-
-function Topbar({ onMenu }) {
-
+export default function Landing() {
   const navigate = useNavigate()
 
-  return (
-    <div className="sticky top-0 z-40 bg-white/80 backdrop-blur border-b">
-      <div className="mx-auto max-w-7xl px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-xl bg-emerald-600 grid place-items-center text-white font-bold">F</div>
-          <span className="font-semibold">Facturate</span>
-        </div>
-        <div className="hidden md:flex items-center gap-6 text-sm">
-          <a className="hover:text-emerald-700" onClick={() => onMenu("landing")}>Inicio</a>
-          <a className="hover:text-emerald-700" onClick={() => onMenu("pricing")}>Planes</a>
-          <a className="hover:text-emerald-700" onClick={() => onMenu("team")}>Equipo</a>
-          <a className="hover:text-emerald-700" onClick={() => onMenu("support")}>Soporte</a>
-          <a className="hover:text-emerald-700" onClick={() => onMenu("settings")}>Ajustes</a>
-        </div>
-        <div className="flex items-center gap-3">
-          {
-          /*auth ? (
-            <>
-              <div className="hidden sm:block text-sm text-slate-600">Hola, <span className="font-medium">{auth.name}</span></div>
-              <Button variant="outline" className="gap-2" onClick={onLogout}><LogOut className="h-4 w-4"/>Salir</Button>
-            </>
-          ) : (
-           */
-            <Button className="gap-2 bg-emerald-600 hover:bg-emerald-700" onClick={() => navigate('/login')}><LogIn className="h-4 w-4"/>Ingresar</Button>
-          }
-
-          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => onMenu("pricing")}><Menu/></Button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Landing({ onStart, onPricing }) {
   return (
     <motion.section initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="py-14">
       <div className="grid lg:grid-cols-2 gap-10 items-center">
@@ -223,8 +22,8 @@ function Landing({ onStart, onPricing }) {
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-emerald-900">Facturá en segundos, sin dolores de cabeza</h1>
           <p className="mt-4 text-slate-600 max-w-xl">Emití comprobantes electrónicos con AFIP, enviá por WhatsApp o email y cobrá con un link de pago. Panel con métricas, equipo con permisos y todo en la nube.</p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Button className="bg-emerald-600 hover:bg-emerald-700 gap-2" onClick={onStart}>Probar gratis</Button>
-            <Button variant="outline" onClick={onPricing}>Ver planes</Button>
+            <Button className="bg-emerald-600 hover:bg-emerald-700 gap-2" onClick={() => alert('TBD')}>Probar gratis</Button>
+            <Button variant="outline" onClick={() => navigate('pricing')}>Ver planes</Button>
           </div>
           <div className="mt-6 flex items-center gap-4 text-slate-500 text-sm">
             <div className="flex items-center gap-1"><Star className="h-4 w-4 text-amber-500"/>4.8/5</div>
@@ -300,7 +99,7 @@ function HeroLaptop() {
     </div>
   );
 }
-
+/*
 function Onboarding({ company, setCompany, onFinish }) {
   const steps = ["Empresa", "Impuestos", "Integraciones"];
   const stepper = useStepper(steps);
@@ -511,6 +310,8 @@ function Kpi({title, value}) {
   );
 }
 
+*/
+/*
 function InvoiceBuilder({ company, onCancel, onSave }) {
   const [clientQuery, setClientQuery] = useState("");
   const [client, setClient] = useState(null);
@@ -644,7 +445,8 @@ function InvoiceBuilder({ company, onCancel, onSave }) {
     </motion.section>
   );
 }
-
+*/
+/*
 function PreviewInvoice({ company, client, items, subtotal, iva, total, includeLink }){
   return (
     <div className="mt-4 border rounded-lg p-4">
@@ -696,7 +498,8 @@ function PreviewInvoice({ company, client, items, subtotal, iva, total, includeL
     </div>
   );
 }
-
+*/
+/*
 function InvoiceList({ invoices, onNew, onBack }) {
   const [q, setQ] = useState("");
   const filtered = invoices.filter(i => i.client.name.toLowerCase().includes(q.toLowerCase()));
@@ -748,41 +551,8 @@ function InvoiceList({ invoices, onNew, onBack }) {
     </section>
   );
 }
-
-function Pricing({ onSelect }) {
-  const plans = [
-    {id:"basic", name:"Básico", price:"$7.990", desc:"Para empezar", bullets:["100 comprobantes/mes","1 usuario","Soporte por email"]},
-    {id:"pro", name:"Pro", price:"$19.990", desc:"Para PyMEs", bullets:["500 comprobantes/mes","3 usuarios","WhatsApp + MP"]},
-    {id:"empresa", name:"Empresa", price:"$49.990", desc:"Alto volumen", bullets:["Ilimitado","Usuarios ilimitados","API + SLA"]},
-  ];
-  return (
-    <section className="py-12">
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold">Planes y precios</h2>
-        <p className="text-slate-500">Elegí el plan que mejor se adapta a tu negocio</p>
-      </div>
-      <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-        {plans.map(p => (
-          <Card key={p.id} className="relative">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">{p.name}<Badge variant="secondary">AFIP Ready</Badge></CardTitle>
-              <CardDescription>{p.desc}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-extrabold">{p.price}<span className="text-base font-normal text-slate-500">/mes</span></div>
-              <ul className="mt-4 space-y-2 text-sm text-slate-600">
-                {p.bullets.map((b,i)=> <li key={i} className="flex gap-2"><Check className="h-4 w-4 text-emerald-600"/>{b}</li>)}
-              </ul>
-            </CardContent>
-            <CardFooter>
-              <Button className="w-full bg-emerald-600 hover:bg-emerald-700" onClick={()=>onSelect(p)}>Elegir plan</Button>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
-    </section>
-  );
-}
+*/
+/*
 
 function Checkout({ plan, onBack, onDone }) {
   return (
@@ -976,7 +746,7 @@ function Footer(){
     </footer>
   );
 }
-
+*/
 function ShieldIcon(){
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-4 w-4"><path fill="currentColor" d="M12 2l7 3v6c0 5-3.4 9.4-7 10c-3.6-.6-7-5-7-10V5l7-3zm0 7l-4 4l1.4 1.4L12 11.8l2.6 2.6L16 13l-4-4z"/></svg>
