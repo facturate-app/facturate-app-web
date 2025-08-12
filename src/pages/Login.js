@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
-import GoogleLoginButton from '../components/GoogleLoginButton';
+import GoogleLoginButton from '../components/auth/GoogleLoginButton';
 import { toast } from "react-toastify";
 import { useQuery } from "../utils/UseQuery";
 
@@ -25,7 +25,7 @@ const Login = () => {
   const toApp = (isLoggedIn) => {
     if (isLoggedIn) {
       const redirection = query.get('redirect_to');
-      navigate(redirection === null ? "/web-app/facutacion" : redirection);
+      navigate(redirection === null ? "/web-app/facturacion" : redirection);
     }
   };
 

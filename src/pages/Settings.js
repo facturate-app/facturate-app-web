@@ -1,54 +1,68 @@
+import { useState } from "react";
+import { Button } from "../components/ui/Button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/Card";
+import { Input } from "../components/ui/Input";
+
 export default function Settings() {
-    const [company, setCompany] = useState()
-    return (
-        <section className="py-10">
-            <div className="max-w-3xl mx-auto">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Ajustes</CardTitle>
-                        <CardDescription>Datos fiscales y preferencias</CardDescription>
-                    </CardHeader>
-                    <CardContent className="grid sm:grid-cols-2 gap-4">
-                        <div>
-                            <Label>Razón social</Label>
-                            <Input value={company.name} onChange={(e) => setCompany({ ...company, name: e.target.value })} />
-                        </div>
-                        <div>
-                            <Label>CUIT</Label>
-                            <Input value={company.cuit} onChange={(e) => setCompany({ ...company, cuit: e.target.value })} />
-                        </div>
-                        <div>
-                            <Label>Dirección</Label>
-                            <Input value={company.address} onChange={(e) => setCompany({ ...company, address: e.target.value })} />
-                        </div>
-                        <div>
-                            <Label>Punto de venta</Label>
-                            <Input value={company.pos} onChange={(e) => setCompany({ ...company, pos: e.target.value })} />
-                        </div>
-                        <div className="sm:col-span-2">
-                            <Label>Email</Label>
-                            <Input value={company.email} onChange={(e) => setCompany({ ...company, email: e.target.value })} />
-                        </div>
-                        <div className="sm:col-span-2 flex items-center justify-between p-4 border rounded-lg">
-                            <div>
-                                <div className="font-medium">Mercado Pago</div>
-                                <div className="text-sm text-slate-500">Cobrá con link en tus facturas</div>
-                            </div>
-                            <Switch checked={company.mpEnabled} onCheckedChange={(v) => setCompany({ ...company, mpEnabled: v })} />
-                        </div>
-                        <div className="sm:col-span-2 flex items-center justify-between p-4 border rounded-lg">
-                            <div>
-                                <div className="font-medium">WhatsApp</div>
-                                <div className="text-sm text-slate-500">Enviá comprobantes por WA</div>
-                            </div>
-                            <Switch checked={company.waEnabled} onCheckedChange={(v) => setCompany({ ...company, waEnabled: v })} />
-                        </div>
-                    </CardContent>
-                    <CardFooter>
-                        <Button className="bg-emerald-600 hover:bg-emerald-700">Guardar cambios</Button>
-                    </CardFooter>
-                </Card>
-            </div>
-        </section>
-    );
+  const [form, setForm] = useState({
+    nombreLegal: "",
+    domicilio: "",
+    telefono: "",
+    email: "",
+    categoriaMonotributo: "A",
+  });
+
+  const onChange = (field) => (e) => setForm({ ...form, [field]: e.target.value });
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+  };
+
+  return (
+    <section className="py-10">
+      <div className="max-w-3xl mx-auto">
+        <Card>
+          <CardHeader>
+            <CardTitle>Ajustes</CardTitle>
+            <CardDescription>Datos que se mostrarán en tus comprobantes</CardDescription>
+          </CardHeader>
+          <form onSubmit={onSubmit}>
+            <CardContent className="grid sm:grid-cols-2 gap-4">
+              <div>
+                <div className="text-xs text-slate-500 mb-1">Nombre legal</div>
+                <Input value={form.nombreLegal} onChange={onChange("nombreLegal")} />
+              </div>
+              <div>
+                <div className="text-xs text-slate-500 mb-1">Domicilio</div>
+                <Input value={form.domicilio} onChange={onChange("domicilio")} />
+              </div>
+              <div>
+                <div className="text-xs text-slate-500 mb-1">Teléfono</div>
+                <Input value={form.telefono} onChange={onChange("telefono")} />
+              </div>
+              <div>
+                <div className="text-xs text-slate-500 mb-1">Email</div>
+                <Input type="email" value={form.email} onChange={onChange("email")} />
+              </div>
+              <div className="sm:col-span-2">
+                <div className="text-xs text-slate-500 mb-1">Categoría de monotributo</div>
+                <select
+                  value={form.categoriaMonotributo}
+                  onChange={onChange("categoriaMonotributo")}
+                  className="h-10 w-full rounded-md border border-gray-300 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                >
+                  {["A","B","C","D","E","F","G","H","I","J","K"].map(c => (
+                    <option key={c} value={c}>Categoría {c}</option>
+                  ))}
+                </select>
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700">Guardar cambios</Button>
+            </CardFooter>
+          </form>
+        </Card>
+      </div>
+    </section>
+  );
 }

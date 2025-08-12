@@ -6,8 +6,11 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#059669",  // Verde esmeralda
+          DEFAULT: "#059669",
           foreground: "#ffffff",
+        },
+        brand: {
+          purple: "#7E22CE"
         },
         border: "#e5e7eb",
         input: "#e5e7eb",

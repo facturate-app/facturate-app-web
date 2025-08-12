@@ -1,7 +1,7 @@
 import { Check } from "lucide-react";
-import { Badge } from "../components/Badge";
-import { Button } from "../components/Button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/Card";
+import { Badge } from "../components/ui/Badge";
+import { Button } from "../components/ui/Button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/Card";
 
 export default function Pricing() {
   const plans = [
